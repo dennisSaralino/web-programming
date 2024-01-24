@@ -5,11 +5,35 @@
 <body>
 Hello, there! How are you?
 
+<ul>
+    <li>A</li>
+    <li>B</li>
+    <ul>
+        <li>CA</li>
+        <li>CB</li>
+        <li>CC</li>
+    </ul>
+</ul>
+
 <form id="numberForm">
         <input type="number" name="number1" placeholder="Enter first number">
         <input type="number" name="number2" placeholder="Enter second number">
         <button type="submit">Submit</button>
 </form>
+
+<div id="result"></div>
+
+<script>
+    var message = "Hello there"
+    document.getElementById('result').innerText = message
+
+    // waits for everything else to load before calling function()
+    document.addEventListener('DOMContentLoaded', function(){
+        var message = "Ready to go"
+        document.getElementById('result').innerText = message
+    })
+    
+</script>
 
 </body>
 </html>
