@@ -1,39 +1,40 @@
 <html>
+
 <head>
-    <title>Number Comparison</title>
+    <title>Number Comparison Updated</title>
 </head>
-<body>
-Hello, there! How are you?
+    This is a demo page. 
+    <div id="area54">
 
-<ul>
-    <li>A</li>
-    <li>B</li>
-    <ul>
-        <li>CA</li>
-        <li>CB</li>
-        <li>CC</li>
-    </ul>
-</ul>
+    </div>
+    <form id="numberForm">
+        <input type="number" id="number1" placeholder="Enter first number">
+        <input type="number" id="number2" placeholder="Enter second number">
+        <button id="submit_button" type="submit">Compare</button>
+    </form>
 
-<form id="numberForm">
-        <input type="number" name="number1" placeholder="Enter first number">
-        <input type="number" name="number2" placeholder="Enter second number">
-        <button type="submit">Submit</button>
-</form>
+    <div id="result"></div>
 
-<div id="result"></div>
-
-<script>
-    var message = "Hello there"
-    document.getElementById('result').innerText = message
-
-    // waits for everything else to load before calling function()
-    document.addEventListener('DOMContentLoaded', function(){
-        var message = "Ready to go"
-        document.getElementById('result').innerText = message
-    })
-    
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('numberForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var number1 = document.getElementById('number1').value;
+                var number2 = document.getElementById('number2').value;
+                if (number1 > number2) {
+                    var message = "First number is greater than second number.";
+                } else if (number1 < number2) {
+                    var message = "First number is less than second number.";
+                } else {
+                    var message = "First number is equal to second number.";
+                }
+                document.getElementById('result').innerText = message;
+                document.getElementById('submit_button').disabled = true;
+                document.getElementById('area54').innerHTML = '<hr>';
+            });
+        });
+    </script>
 
 </body>
+
 </html>
