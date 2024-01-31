@@ -2,11 +2,78 @@
 
 <head>
     <title>Number Comparison Updated</title>
+    <!--# is for unique id, . is for classes, * is for everything-->
+    <style>
+        #example {
+            color: green;
+        }
+        .weird {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        .xxcolorful {
+            color: red;
+        }
+        h1 {
+            font-size: xx-large;
+        }
+        h1[name="billy"] {
+            font-size: small;
+        }
+    </style>
+
+    <!--taking styling from a library-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
 </head>
     This is a demo page. 
-    <div id="area54">
 
+    <!--table creation with Bootstrap styling-->
+    <div id="area54">
+        <table class="table table-bordered table-striped">
+            <tr>
+                <td>A</td>
+                <td class="colorful">B</td>
+            </tr>
+            <tr>
+                <td>C</td>
+                <td>D</td>
+            </tr>
+        </table>
     </div>
+
+    <!--grid layout and adding images-->
+    <table>
+        <tr>
+            <td><img src="ChristmasTorch.jpg" width="140" height="200"></img></td>
+            <td>
+                <table>
+                    <tr><td><img src="ChristmasTorch.jpg" width="70" height="100"></td></tr>
+                    <tr><td>C</td></tr>
+                    <tr><td>D</td></tr>
+                    <tr><td>
+                        <table>
+                            <tr>
+                                <td>E1</td>
+                                <td>E2</td>
+                            </tr>
+                        </table>
+                    </td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!--CSS styling (see style section in head)-->
+    <h1 class="colorful weird">Some words</h1>
+    <h1 name="billy">Some words</h1>
+    <h1 id="example">Some words</h1>
+    <h1 class="colorful">Some words</h1>
+    
+
+    <!--user input and button creation-->
     <form id="numberForm">
         <input type="number" id="number1" placeholder="Enter first number">
         <input type="number" id="number2" placeholder="Enter second number">
