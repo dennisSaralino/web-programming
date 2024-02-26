@@ -9,4 +9,25 @@ h1 {
 
 p {
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding-bottom: 15px;
+}
+
+div {
+    background-color: rgba(0, 0, 100, 0.1);
+}
+
+img {
+    border-style: solid;
+    color: black;
+    border-radius: 10px;
+    position: relative;
+    margin: auto;
+    width: 25%;
+    float: right;
+}
+
+a{
+    color:midnightblue;
+    text-decoration: none;
+    padding-right: 30px;
 }
