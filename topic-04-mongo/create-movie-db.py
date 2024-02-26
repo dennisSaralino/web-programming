@@ -15,13 +15,13 @@ classic_sci_fi_movies = [
     {"title": "The Time Machine", "year": 1960, "director": "George Pal", "plot": "A man's quest for knowledge turns into a desperate race through time after he invents a machine that can transport him through time."}
 ]
 
-# create a mongita client connection
+# open a mongita client connection
 client = MongitaClientDisk()
 
-# create a movie database
+# open a movie database
 movie_db = client.movie_db
 
-# create a scifi collection
+# open a scifi collection
 scifi_collection = movie_db.scifi_collection
 
 # empty the collection
