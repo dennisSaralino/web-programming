@@ -18,7 +18,7 @@
         textarea = document.getElementById("myTextArea");
         textarea.value = "Some value --- ";
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/', true); 
+        xhr.open('GET', 'classic_sci_fi_movies.json'); 
         console.log("opened")
         xhr.onreadystatechange = function(event) {
             if (xhr.readyState == 4 && xhr.status == 200) {
