@@ -1,9 +1,10 @@
+import json
 # Creating a Mongita database with movie information
 from mongita import MongitaClientDisk
 
-quotes = [
-    {'text': "Meow", 'author': "Torch"},
-    {'text': "Live long and prosper", 'author': "Spock"}
+quotes_data = [
+    {"text": "Meow", "author": "Torch"},
+    {"text": "Live long and prosper", "author": "Spock"},
 ]
 
 # open a mongita client connection
@@ -19,7 +20,7 @@ quotes_collection = quotes_db.quotes_collection
 quotes_collection.delete_many({})
 
 # put the quotes in the database
-quotes_collection.insert_many(quotes)
+quotes_collection.insert_many(quotes_data)
 
 # make sure the quotes are there
 print(quotes_collection.count_documents({}))
