@@ -32,11 +32,28 @@ def post_create():
     quotes_collection = quotes_db.quotes_collection
     quote = request.form.get("quote", None)
     author = request.form.get("author", None)
-    quote_data = {
-        "text": quote,
-        "author": author,
-    }
     quotes_collection.insert_one({"text": quote, "author": author})
+    return redirect("/quotes")
+
+@app.route("/edit", methods=["GET"])
+@app.route("/edit/<id>", methods=["GET"])
+def get_edit(id=None):
+    if id:
+        return render_template("edit.html", id=id)
+    return redirect("/quotes")
+
+@app.route("/post_edit", methods=["POST"])
+@app.route("/post_edit/<id>", methods=["POST"])
+def post_edit(id=None):
+    if id:
+        quotes_collection = quotes_db.quotes_collection
+        newQuote = request.form.get("newQuote", None)
+        newAuthor = request.form.get("newAuthor", None)
+        data = {
+            'text': newQuote,
+            'author': newAuthor
+        }
+        quotes_collection.update_one({"_id":ObjectId(id)}, data)
     return redirect("/quotes")
 
 
