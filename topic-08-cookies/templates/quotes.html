@@ -1,0 +1,25 @@
+<!--Template using forms-->
+
+<html>
+    <body>
+        <h1>Quotes</h1>
+        <hr>
+        <table>
+            {% for item in data %}
+            <tr>
+                <td id="quoteText">{{item["text"]}}</td>
+                <td>
+                    <em>--</em>
+                    <em>{{item["author"]}}</em>
+                </td>
+                <td> [<a href="/edit/{{item['_id']}}">edit</a>]</td>
+                <td> [<a href="/delete/{{item['_id']}}">remove</a>]</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <a href="/create">Add a quote</a>
+        <hr />
+        You've visited this site {{numebr_of_visits}} times. Thanks for being here!
+    </body>
+</html>

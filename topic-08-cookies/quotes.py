@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect # redirect
+from flask import Flask, render_template, request, redirect, make_response
 from mongita import MongitaClientDisk
 from bson import ObjectId
 
@@ -10,17 +10,33 @@ client = MongitaClientDisk()
 # open a quote database
 quotes_db = client.quotes_db
 
+import uuid
+
+# Generate a random UUID
+session_key = uuid.uuid4()
+print(session_key)
+
 # GET method
 @app.route("/", methods=["GET"])
 @app.route("/quotes", methods=["GET"])
 def get_quotes():
+    number_of_visits = int(request.cookies.get("number_of_visits", "0"))
+    session_id = request.cookies.get("session_id", None)
+    if not session_id:
+        session_id = str(uuid.uuid4())
+    print("NV=", number_of_visits)
+    print("SI=", session_id)
     quotes_collection = quotes_db.quotes_collection
     data = list(quotes_collection.find({}))
     for item in data:
         item["_id"] = str(item["_id"])
         item["object"] = ObjectId(item["_id"])
     print(data)
-    return render_template("quotes.html", data=data)
+    html = render_template("quotes.html", data=data,
+    number_of_visits=number_of_visits)
+    response = make_response(html)
+    response.set_cookie("number_of_visits", str(number_of_visits + 1))
+    return response
 
 
 @app.route("/create", methods=["GET"])
