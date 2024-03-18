@@ -20,12 +20,11 @@ print(session_key)
 @app.route("/", methods=["GET"])
 @app.route("/quotes", methods=["GET"])
 def get_quotes():
-    number_of_visits = int(request.cookies.get("number_of_visits", "0"))
     session_id = request.cookies.get("session_id", None)
     if not session_id:
+        return("You are not logged in.")
         session_id = str(uuid.uuid4())
-    print("NV=", number_of_visits)
-    print("SI=", session_id)
+    number_of_visits = int(request.cookies.get("number_of_visits", "0"))
     quotes_collection = quotes_db.quotes_collection
     data = list(quotes_collection.find({}))
     for item in data:
@@ -33,18 +32,37 @@ def get_quotes():
         item["object"] = ObjectId(item["_id"])
     print(data)
     html = render_template("quotes.html", data=data,
-    number_of_visits=number_of_visits)
+    number_of_visits=number_of_visits, session_id=session_id)
     response = make_response(html)
     response.set_cookie("number_of_visits", str(number_of_visits + 1))
+    response.set_cookie("session_id", session_id)
     return response
 
+@app.route("/login", methods=["GET"])
+def get_login():
+    response = make_response("Logged in.")
+    session_id = str(uuid.uuid4())
+    response.set_cookie("session_id", session_id)
+    return response
+
+@app.route("/logout", methods=["GET"])
+def get_logout():
+    response = make_response("Logged out.")
+    response.delete_cookie("session_id")
+    return response
 
 @app.route("/create", methods=["GET"])
 def get_create():
+    session_id = request.cookies.get("session_id", None)
+    if not session_id:
+        return("You are not logged in.")
     return render_template("create.html")
 
 @app.route("/create", methods=["POST"])
 def post_create():
+    session_id = request.cookies.get("session_id", None)
+    if not session_id:
+        return("You are not logged in.")
     quotes_collection = quotes_db.quotes_collection
     quote = request.form.get("quote", None)
     author = request.form.get("author", None)
@@ -53,6 +71,9 @@ def post_create():
 
 @app.route("/edit/<id>", methods=["GET"])
 def get_edit(id=None):
+    session_id = request.cookies.get("session_id", None)
+    if not session_id:
+        return("You are not logged in.")
     if id:
         # open the quotes collection
         quotes_collection = quotes_db.quotes_collection
@@ -62,8 +83,11 @@ def get_edit(id=None):
         return render_template("edit.html", data=data)
     return redirect("/quotes")
 
-@app.route("/post_edit", methods=["POST"])
+@app.route("/edit", methods=["POST"])
 def post_edit():
+    session_id = request.cookies.get("session_id", None)
+    if not session_id:
+        return("You are not logged in.")
     _id = request.form.get("_id", None)
     text = request.form.get("newQuote", "")
     author = request.form.get("newAuthor", "")
@@ -79,6 +103,9 @@ def post_edit():
 @app.route("/delete", methods=["GET"])
 @app.route("/delete/<id>", methods=["GET"])
 def get_delete(id=None):
+    session_id = request.cookies.get("session_id", None)
+    if not session_id:
+        return("You are not logged in.")
     if id:
         # open the quotes collection
         quotes_collection = quotes_db.quotes_collection
