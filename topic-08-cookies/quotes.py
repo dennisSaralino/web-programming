@@ -32,22 +32,35 @@ def get_quotes():
         item["object"] = ObjectId(item["_id"])
     print(data)
     html = render_template("quotes.html", data=data,
-    number_of_visits=number_of_visits, session_id=session_id)
+    number_of_visits=number_of_visits, session_id=session_id, user=user)
     response = make_response(html)
     response.set_cookie("number_of_visits", str(number_of_visits + 1))
     response.set_cookie("session_id", session_id)
     return response
 
+# Automatic login page
 @app.route("/login", methods=["GET"])
 def get_login():
-    response = make_response("Logged in.")
+    session_id = request.cookies.get("session_id", None)
+    if session_id:
+        response = redirect("/quotes")
+        return response
+    return render_template("login.html")
+    
+
+# Form-based login page
+app.route("/login", methods=["POST"])
+def post_login():
+    response = redirect("/quotes")
     session_id = str(uuid.uuid4())
     response.set_cookie("session_id", session_id)
+    user = request.form.get("user", "")
+    response.set_cookie("user", user)
     return response
 
 @app.route("/logout", methods=["GET"])
 def get_logout():
-    response = make_response("Logged out.")
+    response = redirect("/login")
     response.delete_cookie("session_id")
     return response
 
