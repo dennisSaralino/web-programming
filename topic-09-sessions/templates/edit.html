@@ -1,0 +1,22 @@
+<!--Template using forms-->
+
+<html>
+    <body>
+        Edit this quote:
+        <br>
+        <form action="/edit" method="POST">
+            <input type="hidden" id="_id" name="_id" value="{{data["_id"]}}" />
+            <table>
+                <tr>
+                    <td><label for="newQuote">Quote </label></td>
+                    <td><textarea type="text" id="newQuote" name="newQuote">{{data["text"]}}</textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="newAuthor">Author </label></td>
+                    <td><input type="text" id="newAuthor" name="newAuthor" value="{{data["author"]}}"/></td>
+                </tr>
+            </table>
+            <button type="submit">Update</button>
+        </form>
+    </body>
+</html>
