@@ -9,6 +9,8 @@ client = MongitaClientDisk()
 
 # open a quote database
 quotes_db = client.quotes_db
+session_db = client.session_db
+
 
 import uuid
 
@@ -16,28 +18,30 @@ import uuid
 session_key = uuid.uuid4()
 print(session_key)
 
+
 # GET method
 @app.route("/", methods=["GET"])
 @app.route("/quotes", methods=["GET"])
 def get_quotes():
     session_id = request.cookies.get("session_id", None)
     if not session_id:
-        return("You are not logged in.")
-        session_id = str(uuid.uuid4())
+        response = redirect("/login")
+        return response
     number_of_visits = int(request.cookies.get("number_of_visits", "0"))
 
-    session_data = session_collection.find({"session_id": session_id})
+    session_data = list(session_collection.find({"session_id": session_id}))
     assert len(session_data) == 1
     session_data == session_data[0]
     user = session_data.get("user", "unknown user")
 
+    # load quotes from database
     quotes_collection = quotes_db.quotes_collection
     data = list(quotes_collection.find({}))
     for item in data:
         item["_id"] = str(item["_id"])
         item["object"] = ObjectId(item["_id"])
-    print(data)
 
+    # display data in new template
     html = render_template("quotes.html", data=data,
     number_of_visits=number_of_visits, session_id=session_id, user=user)
     response = make_response(html)
@@ -45,31 +49,32 @@ def get_quotes():
     response.set_cookie("session_id", session_id)
     return response
 
+
 # Automatic login page
 @app.route("/login", methods=["GET"])
 def get_login():
     session_id = request.cookies.get("session_id", None)
+    print("Pre-login session id = ", session_id)
     if session_id:
-        response = redirect("/quotes")
-        return response
+        return redirect("/quotes")
     return render_template("login.html")
     
 
 # Form-based login page
 app.route("/login", methods=["POST"])
 def post_login():
-    
-    session_id = str(uuid.uuid4())
     user = request.form.get("user", "")
+    session_id = str(uuid.uuid4())
 
     # open the session collection
     session_collection = session_db.session_collection
+    #insert the user
     session_collection.delete({"session_id": session_id})
     session_data = {"session_id": session_id, "user": user}
     session_collection.insert_one(session_data)
 
     response = redirect("/quotes")
-    response.set_cookie("user", user)
+    response.set_cookie("session_id", session_id)
     return response
 
 
@@ -79,31 +84,38 @@ def get_logout():
     response.delete_cookie("session_id")
     return response
 
+
 @app.route("/create", methods=["GET"])
 def get_create():
     session_id = request.cookies.get("session_id", None)
     if not session_id:
-        return("You are not logged in.")
+        response = redirect("/login")
+        return response
     return render_template("create.html")
+
 
 @app.route("/create", methods=["POST"])
 def post_create():
     session_id = request.cookies.get("session_id", None)
     if not session_id:
-        return("You are not logged in.")
-    quotes_collection = quotes_db.quotes_collection
-    quote = request.form.get("quote", None)
-    author = request.form.get("author", None)
-    quotes_collection.insert_one({"text": quote, "author": author})
+        response = redirect("/login")
+        return response
+
+    quote = request.form.get("quote", "")
+    author = request.form.get("author", "")
+    if text != "" and author != "":
+        quotes_collection = quotes_db.quotes_collection
+        quotes_collection.insert_one({"text": quote, "author": author})
     return redirect("/quotes")
+
 
 @app.route("/edit/<id>", methods=["GET"])
 def get_edit(id=None):
     session_id = request.cookies.get("session_id", None)
     if not session_id:
-        return("You are not logged in.")
+        response = redirect("/login")
+        return response
     if id:
-        # open the quotes collection
         quotes_collection = quotes_db.quotes_collection
         # get the item
         data = quotes_collection.find_one({"_id": ObjectId(id)})
@@ -111,16 +123,18 @@ def get_edit(id=None):
         return render_template("edit.html", data=data)
     return redirect("/quotes")
 
+
 @app.route("/edit", methods=["POST"])
 def post_edit():
     session_id = request.cookies.get("session_id", None)
     if not session_id:
-        return("You are not logged in.")
+        response = redirect("/login")
+        return response
+
     _id = request.form.get("_id", None)
     text = request.form.get("newQuote", "")
     author = request.form.get("newAuthor", "")
     if _id:
-        # open the quotes collection
         quotes_collection = quotes_db.quotes_collection
         # update the values in this particular record
         values = {"$set": {"text": text, "author": author}}
@@ -133,10 +147,10 @@ def post_edit():
 def get_delete(id=None):
     session_id = request.cookies.get("session_id", None)
     if not session_id:
-        return("You are not logged in.")
+        response = redirect("/login")
+        return response
+
     if id:
-        # open the quotes collection
         quotes_collection = quotes_db.quotes_collection
-        #delete the item
         quotes_collection.delete_one({"_id":ObjectId(id)})
     return redirect("/quotes")

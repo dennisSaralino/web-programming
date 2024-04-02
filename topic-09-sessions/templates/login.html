@@ -1,19 +1,17 @@
 <html>
-    You are logged out. Log in below.
-    <br>
-    <table>
-        <tr>
-            <td>
-                <label for="User">User</label>
-            </td>
-            <td>
-                <input type="text" id="user" name="author" />
-            </td>
-        </tr>
-        <tr>
-            <td><a href="/quotes"><button id="quotes">Login</button></a></td>
-        </tr>
-    </table>
+<body>
+    <h1>You are logged out. Please log in.</h1>
 
-    <input type="button">
+    <form action="/login" method="POST">
+        <table>
+            <tr>
+                <td><label for="User">User</label></td>
+                <td><input type="text" id="user" name="user" /></td>
+            </tr>
+        </table>
+        <button type="submit">Log In</button>
+        <br>
+        <a href="/">Cancel</a>
+    </form>
+</body>
 </html>
