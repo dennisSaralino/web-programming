@@ -3,8 +3,8 @@ import json
 from mongita import MongitaClientDisk
 
 quotes_data = [
-    {"text": "Meow", "author": "Torch"},
-    {"text": "Live long and prosper", "author": "Spock"},
+    {"text": "Meow", "author": "Torch", "owner":"Dennis"},
+    {"text": "Live long and prosper", "author": "Spock", "owner":"Dennis"},
 ]
 
 # open a mongita client connection
