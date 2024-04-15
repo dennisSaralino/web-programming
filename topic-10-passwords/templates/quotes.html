@@ -1,0 +1,31 @@
+<!--Template using forms-->
+
+<html>
+    <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    </head>
+    <body>
+        <h1>Quotes</h1>
+        <hr>
+        <table>
+            {% for item in data %}
+            <tr>
+                <td>[{{item["owner"]}}]</td>
+                <td id="quoteText">{{item["text"]}}</td>
+                <td>
+                    <em>--</em>
+                    <em>{{item["author"]}}</em>
+                </td>
+                <td> [<a href="/edit/{{item['_id']}}"><i class="material-icons">edit</i></a>]</td>
+                <td> [<a href="/delete/{{item['_id']}}"><i class ="material-icons">remove</i></a>]</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <a href="/create">Add a quote</a>
+        <hr />
+        User: {{user}} <a href="/logout">Logout</a>
+        <hr />
+        <a href="/logout"><button id="logout">Logout</button></a>
+    </body>
+</html>
