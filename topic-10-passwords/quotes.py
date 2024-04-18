@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, make_response
 from mongita import MongitaClientDisk
 from bson import ObjectId
+from passwords import hash_password, check_password
 
 app = Flask(__name__)
 
@@ -34,9 +35,11 @@ def get_quotes():
     # load quotes from database
     quotes_collection = quotes_db.quotes_collection
     data = list(quotes_collection.find({"owner":user}))
-    for item in data:
+    publicData = list(quotes_collection.find({"public":True}))
+    for item in data + publicData:
         item["_id"] = str(item["_id"])
         item["object"] = ObjectId(item["_id"])
+    
     # display data in new template
     html = render_template("quotes.html", data=data, user=user,)
     response = make_response(html)
@@ -58,9 +61,16 @@ def get_login():
 @app.route("/login", methods=["POST"])
 def post_login():
     user = request.form.get("user", "")
+    password = request.form.get("password", "")
     user_collection = user_db.user_collection
     user_data = list(user_collection.find({"user": user}))
     if len(user_data) != 1:
+        response = redirect("/login")
+        response.delete_cookie("session_id")
+        return response
+    hashed_password = user_data[0].get("hashed_password", "")
+    salt = user_data[0].get("salt", "")
+    if check_password(password, hashed_password, salt) == False:
         response = redirect("/login")
         response.delete_cookie("session_id")
         return response
@@ -73,6 +83,36 @@ def post_login():
     session_collection.insert_one(session_data)
     response = redirect("/quotes")
     response.set_cookie("session_id", session_id)
+    return response
+
+
+# Automatic login page
+@app.route("/register", methods=["GET"])
+def get_register():
+    session_id = request.cookies.get("session_id", None)
+    print("Pre-login session id = ", session_id)
+    if session_id:
+        return redirect("/quotes")
+    return render_template("register.html")
+    
+
+# Form-based login page
+@app.route("/register", methods=["POST"])
+def post_register():
+    user = request.form.get("user", "")
+    password = request.form.get("password", "")
+    password2 = request.form.get("password2", "")
+    if password != password2:
+        response = redirect("/register")
+        response.delete_cookie("session_id")
+        return response
+    user_collection = user_db.user_collection
+    user_data = list(user_collection.find({"user": user}))
+    if len(user_data) == 0:
+        hashed_password, salt = hash_password(password)
+        user_collection.insert_one({"user": user, "hashed_password": hashed_password, "salt": salt})
+    response = redirect("/login")
+    response.delete_cookie("session_id")
     return response
 
 
@@ -112,9 +152,10 @@ def post_create():
     user = session_data.get("user", "unknown user")
     quote = request.form.get("quote", "")
     author = request.form.get("author", "")
+    public = request.form.get("public", "") == "on"
     if quote != "" and author != "":
         quotes_collection = quotes_db.quotes_collection
-        quotes_collection.insert_one({"owner": user, "text": quote, "author": author})
+        quotes_collection.insert_one({"owner": user, "text": quote, "author": author, "public": public})
     return redirect("/quotes")
 
 
